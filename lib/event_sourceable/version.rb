@@ -1,5 +1,3 @@
-module Event
-  module Sourceable
-    VERSION = "0.1.0"
-  end
+module EventSourceable
+  VERSION = "0.1.0"
 end
