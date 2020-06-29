@@ -8,11 +8,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Robert Graff"]
   spec.email         = ["robert_graff@yahoo.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because RubyGems requires one.}
+  spec.summary       = "EventSourceable is a minimal way of adding event sourcing to ActiveRecord models."
   spec.homepage      = "https://github.com/goldstar/event-sourceable"
   spec.license       = "MIT"
-
-  spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = spec.homepage
