@@ -1,5 +1,5 @@
 module EventSourceable
-  class EventStore < ActiveRecord::Base
+  class EventStore < ::ActiveRecord::Base
     self.abstract_class = true
     self.inheritance_column = :_type_disabled
     
