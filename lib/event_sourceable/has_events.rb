@@ -18,7 +18,7 @@ module EventSourceable
       end
     end
 
-    def create_event!(event_name, **data)
+    def apply_event!(event_name, **data)
       self.class::EventStore.create!(data: data, aggregate: self, event_name: event_name)
       self
     end
