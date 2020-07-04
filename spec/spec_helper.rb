@@ -1,5 +1,5 @@
 require "bundler/setup"
-#require "event-sourceable"
+require "byebug"
 
 ENV["RAILS_ENV"] ||= "test"
 ENV["DB"] ||= "sqlite"
