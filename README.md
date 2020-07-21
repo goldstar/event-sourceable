@@ -196,18 +196,83 @@ end
 
 ### Defining Reactors
 
+Reactors are side affects of events (similar to ActiveRecord callbacks). They are plain old ruby objects and you put the anywhere in your load path with whatever class you prefer. Just define a `#call` class method.
+
+```ruby
+# reactors/user/send_confirmation_email.rb
+
+class User::SendConfirmationEmail
+  def self.call(event)
+    ...
+  end
+end
+```
+
+In your event add a reactors and sync_reactors method that return a class or string, or an array of classes or strings. 
+
+```ruby
+class User::RegisteredEvent
+  ...
+  
+  def reactors
+    "User::SendConfirmationEmail"
+  end
+
+  def async_reactors
+    [User::SendConfirmationEmail, User::SendConfirmationEmail]
+  end
+end
+```
+
 ### Setting Metadata on your Events
 
+Metadata for an event can be for specific events or as wrapper for all events created inside the wrapper.
+
+The example `ApplicationEvent` allows you to pass metadata in with the event data. You can also just define a metadata method on your event object.
+
+```ruby
+class User::RegisteredEvent < ApplicationEvent 
+  ...
+  def metadata
+    {version: '1'}
+  end
+end
+```
+
+The default metadata for events can be set using a wrapper, for example in your `ApplicationController` as an `around_action`.
+
+```ruby
+class ApplicationController < ActionController::Base
+  around_action :set_event_sourceble_metadata
+
+  def set_event_sourceable_metadata
+    EventSourceable.set_metadata(ip: request.remote_ip, current_user_id: current_user.id){ yield }
+  end
+end
+```
+
+You can also nest them, having metadata set at the rack level, application controller, or an individual controller.
+
+```ruby
+> puts EventSourceable.metadata
+> {}
+> EventSourceable.set_metadata(outer: 1){ EventSourceable.set_metadata(inner: 2){ puts EventSourceable.metadata } }
+> {outer: 1, inner: 2}
+> puts EventSourceable.metadata
+> {}
+> EventSourceable.set_metadata(outer: 1){ EventSourceable.set_metadata(outer: 2){ puts EventSourceable.metadata } }
+> {outer: 2}
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/event-sourceable. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/goldstar/event-sourceable. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
