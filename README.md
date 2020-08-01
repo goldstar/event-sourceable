@@ -196,34 +196,6 @@ end
 
 ### Defining Reactors
 
-Reactors are side affects of events (similar to ActiveRecord callbacks). They are plain old ruby objects and you put the anywhere in your load path with whatever class you prefer. Just define a `#call` class method.
-
-```ruby
-# reactors/user/send_confirmation_email.rb
-
-class User::SendConfirmationEmail
-  def self.call(event)
-    ...
-  end
-end
-```
-
-In your event add a reactors and sync_reactors method that return a class or string, or an array of classes or strings. 
-
-```ruby
-class User::RegisteredEvent
-  ...
-  
-  def reactors
-    "User::SendConfirmationEmail"
-  end
-
-  def async_reactors
-    [User::SendConfirmationEmail, User::SendConfirmationEmail]
-  end
-end
-```
-
 ### Setting Metadata on your Events
 
 Metadata for an event can be for specific events or as wrapper for all events created inside the wrapper.
@@ -246,7 +218,7 @@ class ApplicationController < ActionController::Base
   around_action :set_event_sourceble_metadata
 
   def set_event_sourceable_metadata
-    EventSourceable.set_metadata(ip: request.remote_ip, current_user_id: current_user.id){ yield }
+    EventSourceable.with_metadata(ip: request.remote_ip, current_user_id: current_user.id){ yield }
   end
 end
 ```
@@ -256,11 +228,11 @@ You can also nest them, having metadata set at the rack level, application contr
 ```ruby
 > puts EventSourceable.metadata
 > {}
-> EventSourceable.set_metadata(outer: 1){ EventSourceable.set_metadata(inner: 2){ puts EventSourceable.metadata } }
+> EventSourceable.with_metadata(outer: 1){ EventSourceable.with_metadata(inner: 2){ puts EventSourceable.metadata } }
 > {outer: 1, inner: 2}
 > puts EventSourceable.metadata
 > {}
-> EventSourceable.set_metadata(outer: 1){ EventSourceable.set_metadata(outer: 2){ puts EventSourceable.metadata } }
+> EventSourceable.with_metadata(outer: 1){ EventSourceable.with_metadata(outer: 2){ puts EventSourceable.metadata } }
 > {outer: 2}
 ```
 
