@@ -24,6 +24,8 @@ end
 require File.expand_path('../spec/dummy_app/config/environment.rb', __dir__)
 require 'rspec/rails'
 
+RSpec::Matchers.define_negated_matcher(:not_change, :change)
+
 # Migrate
 migrations_path = Pathname.new(File.expand_path("dummy_app/db/migrate", __dir__))
 puts migrations_path
