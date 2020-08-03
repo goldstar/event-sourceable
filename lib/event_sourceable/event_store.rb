@@ -15,7 +15,7 @@ module EventSourceable
 
     after_initialize do
       self.data ||= {}
-      self.metadata ||= EventSourceable.metadata
+      self.metadata ||= EventSourceable.metadata.dup
       set_type if self.type.nil? && self.event_name.present?
     end
 
