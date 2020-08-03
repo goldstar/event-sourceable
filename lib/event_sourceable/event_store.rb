@@ -75,7 +75,7 @@ module EventSourceable
 
       # record the metadata
       if event.respond_to?(:metadata)
-        self.metadata = metadata.merge!(event.metadata || {})
+        self.metadata = metadata.merge(event.metadata || {})
       end
 
       # Set created_at
