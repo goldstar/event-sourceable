@@ -1,3 +1,5 @@
+require 'active_record'
+
 module EventSourceable
   class EventStore < ::ActiveRecord::Base
     self.abstract_class = true
@@ -13,7 +15,7 @@ module EventSourceable
 
     after_initialize do
       self.data ||= {}
-      self.metadata ||= {}
+      self.metadata ||= EventSourceable.metadata.dup
       set_type if self.type.nil? && self.event_name.present?
     end
 
@@ -73,7 +75,7 @@ module EventSourceable
 
       # record the metadata
       if event.respond_to?(:metadata)
-        self.metadata.merge!(event.metadata || {})
+        self.metadata = metadata.merge(event.metadata || {})
       end
 
       # Set created_at
